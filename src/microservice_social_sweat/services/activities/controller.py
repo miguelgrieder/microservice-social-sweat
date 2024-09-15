@@ -4,6 +4,8 @@ from fastapi import Request
 
 from microservice_social_sweat.services.activities.models import Filter
 
+from . import models
+
 activities_dummy_data = [
     {
         "id": "14864910",
@@ -41,7 +43,7 @@ activities_dummy_data = [
         "id": "3393282",
         "name": "Evening Yoga Class",
         "description": "Unwind with our evening yoga session. Experience a gentle flow designed to release tension, calm your mind, and prepare your body for restful sleep. Our experienced instructor will guide you through a series of poses and breathing exercises tailored to all skill levels. Whether you're looking to de-stress after a long day or enhance your overall well-being, this session offers the perfect balance of relaxation and rejuvenation. Join us and embrace the peaceful ambiance, leaving you refreshed and ready for the day ahead.",
-        "activity_type": "Public Session",
+        "activity_type": "Session",
         "sport_type": "yoga",
         "price": {"value": 75, "unit": "$"},
         "location": {
@@ -141,12 +143,13 @@ activities_dummy_data = [
 
 
 def filter_activities(request: Request, filter: Filter) -> Any:
+    model_activities = [models.Activity.model_validate(x) for x in activities_dummy_data]
     if filter.activity_id:
         activities = None
-        for ac in activities_dummy_data:
-            if int(ac["id"]) == filter.activity_id:
-                activities = [ac]
+        for activity in model_activities:
+            if activity.id == filter.activity_id:
+                activities = [activity]
                 break
     else:
-        activities = activities_dummy_data
+        activities = model_activities
     return {"activities": activities}
