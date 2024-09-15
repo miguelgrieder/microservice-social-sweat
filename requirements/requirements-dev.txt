@@ -53,6 +53,10 @@ deprecated==1.2.14
     #   microservice-social-sweat
 distlib==0.3.8
     # via virtualenv
+dnspython==2.6.1
+    # via
+    #   microservice-social-sweat
+    #   pymongo
 fastapi==0.114.2
     # via microservice-social-sweat
 filelock==3.16.0
@@ -125,6 +129,8 @@ pydantic-core==2.23.3
     #   microservice-social-sweat
     #   pydantic
 pydantic-settings==2.5.2
+    # via microservice-social-sweat
+pymongo==4.8.0
     # via microservice-social-sweat
 pyproject-api==1.7.1
     # via tox

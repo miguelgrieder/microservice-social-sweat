@@ -6,3 +6,4 @@ requests
 pydantic
 httpx
 pydantic-settings
+pymongo

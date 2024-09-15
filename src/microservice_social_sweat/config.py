@@ -31,6 +31,12 @@ class Settings(BaseSettings):
     auth_middleware_enabled: bool = True
     auth_middleware_secret: SecretStr = SecretStr("")
 
+    # - MongoDB Config -
+    mongo_variables_host: str = "localhost"
+    mongo_variables_port: int = 27017
+    mongo_variables_username: str
+    mongo_variables_password: str
+
     # - CORS -
     # cors_origins: list[str] = ["*"]
 
