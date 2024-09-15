@@ -2,7 +2,7 @@ from typing import Any
 
 from fastapi import Request
 
-from microservice_social_sweat.services.activities.models import Filter
+from microservice_social_sweat.services.activities.models import FilterActiviity
 
 from . import models
 
@@ -142,12 +142,12 @@ activities_dummy_data = [
 ]
 
 
-def filter_activities(request: Request, filter: Filter) -> Any:
+def filter_activities(request: Request, filter_activity: FilterActiviity) -> Any:
     model_activities = [models.Activity.model_validate(x) for x in activities_dummy_data]
-    if filter.activity_id:
+    if filter_activity.activity_id:
         activities = None
         for activity in model_activities:
-            if activity.id == filter.activity_id:
+            if activity.id == filter_activity.activity_id:
                 activities = [activity]
                 break
     else:
