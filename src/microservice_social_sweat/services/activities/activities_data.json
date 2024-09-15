@@ -1,6 +1,7 @@
 [
     {
         "id": "14864910",
+        "enabled": true,
         "name": "Downtown Fitness Hub",
         "description": "State-of-the-art fitness center in the heart of downtown. Our gym offers the latest equipment, personal training, and various fitness classes. Open 24/7 for your convenience. We provide a clean and welcoming environment to help you reach your fitness goals. From weightlifting to cardio machines, we have it all.",
         "activity_type": "Public Spot",
@@ -33,6 +34,7 @@
     },
     {
         "id": "3393282",
+        "enabled": true,
         "name": "Evening Yoga Class",
         "description": "Unwind with our evening yoga session. Experience a gentle flow designed to release tension, calm your mind, and prepare your body for restful sleep. Our experienced instructor will guide you through a series of poses and breathing exercises tailored to all skill levels. Whether you're looking to de-stress after a long day or enhance your overall well-being, this session offers the perfect balance of relaxation and rejuvenation. Join us and embrace the peaceful ambiance, leaving you refreshed and ready for the day ahead.",
         "activity_type": "Session",
@@ -67,6 +69,7 @@
     },
     {
         "id": "7885622",
+        "enabled": true,
         "name": "Newbie Soccer Cup",
         "description": "Join us for the inaugural Newbee Soccer Cup, a thrilling new sports event designed to bring together soccer enthusiasts of all skill levels! This exciting tournament offers a platform for amateur teams to showcase their talent, compete in a friendly yet competitive environment, and foster a sense of community and sportsmanship.",
         "activity_type": "Event",
@@ -101,6 +104,7 @@
     },
     {
         "id": "1563562",
+        "enabled": true,
         "name": "IronMan Delray",
         "description": "Challenge yourself with the ultimate endurance event at IronMan Delray. Set against the beautiful backdrop of Delray Beach, this triathlon pushes athletes to their limits with a grueling combination of swimming, cycling, and running. Whether you're a seasoned triathlete or taking on your first IronMan, this event offers a supportive and electrifying atmosphere. With well-marked courses, top-notch facilities, and enthusiastic spectators, IronMan Delray promises an unforgettable experience that will test your strength, stamina, and determination. Finish strong and earn your place among the IronMan elite.",
         "activity_type": "Event",

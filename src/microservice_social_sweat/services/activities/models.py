@@ -86,6 +86,7 @@ class DateTimes(BaseModel):
 
 class Activity(BaseModel):
     id: int
+    enabled: bool
     name: str
     description: str
     activity_type: ActivityType
