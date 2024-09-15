@@ -1,0 +1,8 @@
+fastapi
+starlette
+uvicorn[standard]
+slowapi
+requests
+pydantic
+httpx
+pydantic-settings
