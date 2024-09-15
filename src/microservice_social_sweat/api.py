@@ -4,7 +4,7 @@ from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
-from microservice_social_sweat.services.generic_service.router import router as generic_router
+from microservice_social_sweat.services.activities.router import router as activities_router
 
 
 class ErrorMessage(BaseModel):
@@ -29,4 +29,4 @@ router = APIRouter(
 
 
 # Adiciona routers
-router.include_router(generic_router, prefix="/generic", tags=["generic"])
+router.include_router(activities_router, prefix="/activities", tags=["activities"])
