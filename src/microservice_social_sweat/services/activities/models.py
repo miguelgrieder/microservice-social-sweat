@@ -1,11 +1,11 @@
 from enum import Enum
 from typing import List, Optional
 
-from pydantic import BaseModel, HttpUrl
+from pydantic import BaseModel
 
 
 class FilterActiviity(BaseModel):
-    activity_id: Optional[int]
+    activity_id: Optional[str]
 
 
 class SportType(str, Enum):
@@ -72,7 +72,7 @@ class Reviews(BaseModel):
 
 
 class Host(BaseModel):
-    host_picture_url: HttpUrl
+    host_picture_url: str
     host_name: str
     host_since: str
 
@@ -85,7 +85,7 @@ class DateTimes(BaseModel):
 
 
 class Activity(BaseModel):
-    id: int
+    id: str
     enabled: bool
     name: str
     description: str
@@ -95,6 +95,10 @@ class Activity(BaseModel):
     location: Location
     participants: Participants
     reviews: Reviews
-    pictures: List[HttpUrl]
+    pictures: List[str]
     host: Host
     datetimes: DateTimes
+
+
+class CreateActivityInput(BaseModel):
+    activity: Activity

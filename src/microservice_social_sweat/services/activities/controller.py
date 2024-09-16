@@ -1,3 +1,4 @@
+import logging
 from typing import Any, List
 
 from fastapi import Request
@@ -11,6 +12,7 @@ from microservice_social_sweat.services.activities.models import FilterActiviity
 from . import models
 
 settings = config.get_settings()
+log = logging.getLogger(__name__)
 
 # Setup MongoDB connection
 client: MongoClient[Any] = MongoClient(
@@ -37,3 +39,14 @@ def load_activities_from_mongodb(filter_activity: FilterActiviity) -> List[model
 def filter_activities(request: Request, filter_activity: FilterActiviity) -> Any:
     activities = load_activities_from_mongodb(filter_activity)
     return {"activities": activities}
+
+
+def create_activity(create_activity_input: models.CreateActivityInput) -> Any:
+    try:
+        activity_data = create_activity_input.activity.model_dump()
+        result = activity_collection.insert_one(activity_data)
+        return {"id": str(result.inserted_id)}
+    except Exception as err:
+        error_message = "MongoDB create_activity - failed to create activity"
+        log.exception(error_message)
+        raise err
