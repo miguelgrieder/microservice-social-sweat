@@ -13,10 +13,21 @@ class SportType(str, Enum):
     basketball = "basketball"
     soccer = "soccer"
     tennis = "tennis"
-    # Temporary
-    weight_lifter = "weight-lifter"
     yoga = "yoga"
-    run_fast = "run-fast"
+    triathlon = "triathlon"
+    run = "run"
+    martial_arts = "martial_arts"  # karate
+    motorsports = "motorsports"  # racing-helmet
+    volleyball = "volleyball"
+    handball = "handball"
+    hockey = "hockey"
+    ski = "ski"
+    ski_water = "ski_water"
+    baseball = "baseball"
+    skateboard = "skateboard"  # skateboarding
+    esports = "esports"  # gamepad-variant-outline
+    swim = "swim"
+    other = "other" # water-outline
 
 
 class ActivityType(str, Enum):
