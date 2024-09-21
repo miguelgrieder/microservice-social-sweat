@@ -31,10 +31,9 @@ class SportType(str, Enum):
 
 
 class ActivityType(str, Enum):
-    public_spot = "Public Spot"
-    private_spot = "Private Spot"
-    event = "Event"
-    session = "Session"
+    spot = "spot"
+    event = "event"
+    session = "session"
 
 
 class PriceUnit(str, Enum):
