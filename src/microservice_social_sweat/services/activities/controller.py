@@ -7,7 +7,7 @@ from pymongo.collection import Collection
 from pymongo.cursor import Cursor
 
 from microservice_social_sweat import config
-from microservice_social_sweat.services.activities.models import FilterActiviity
+from microservice_social_sweat.services.activities.models import FilterActivity
 
 from . import models
 
@@ -25,7 +25,7 @@ db = client["social_sweat"]
 activity_collection: Collection[dict[str, Any]] = db["activities"]
 
 
-def load_activities_from_mongodb(filter_activity: FilterActiviity) -> List[models.Activity]:
+def load_activities_from_mongodb(filter_activity: FilterActivity) -> List[models.Activity]:
     query = {"enabled": True}
     if filter_activity.activity_id:
         query["id"] = str(filter_activity.activity_id)  # type: ignore[assignment]
@@ -36,7 +36,7 @@ def load_activities_from_mongodb(filter_activity: FilterActiviity) -> List[model
     return activities
 
 
-def filter_activities(request: Request, filter_activity: FilterActiviity) -> Any:
+def filter_activities(request: Request, filter_activity: FilterActivity) -> Any:
     activities = load_activities_from_mongodb(filter_activity)
     return {"activities": activities}
 

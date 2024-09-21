@@ -12,7 +12,7 @@ router = APIRouter()
 
 
 @router.post("/")
-def filter_activities(request: Request, filter_activity: models.FilterActiviity) -> Any:
+def filter_activities(request: Request, filter_activity: models.FilterActivity) -> Any:
     try:
         result = controller.filter_activities(request=request, filter_activity=filter_activity)
     except requests.exceptions.HTTPError as e:

@@ -4,7 +4,7 @@ from typing import List, Optional
 from pydantic import BaseModel
 
 
-class FilterActiviity(BaseModel):
+class FilterActivity(BaseModel):
     activity_id: Optional[str]
 
 
@@ -27,7 +27,7 @@ class SportType(str, Enum):
     skateboard = "skateboard"  # skateboarding
     esports = "esports"  # gamepad-variant-outline
     swim = "swim"
-    other = "other" # water-outline
+    other = "other"  # water-outline
 
 
 class ActivityType(str, Enum):
