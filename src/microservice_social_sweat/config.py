@@ -46,6 +46,11 @@ class Settings(BaseSettings):
     # - Development -
     dev_uvicorn_reload: bool = False
 
+    # - Clerk -
+    clerk_api_url: str
+    clerk_api_public_key: str
+    clerk_api_secret_key: str
+
     class Config:
         env_file = ".env"
 
