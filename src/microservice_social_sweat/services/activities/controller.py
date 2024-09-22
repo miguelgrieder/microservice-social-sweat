@@ -49,4 +49,4 @@ def create_activity(create_activity_input: models.CreateActivityInput) -> Any:
     except Exception as err:
         error_message = "MongoDB create_activity - failed to create activity"
         log.exception(error_message)
-        raise err
+        raise err  # noqa: TRY201
