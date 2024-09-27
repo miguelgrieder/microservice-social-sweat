@@ -1,13 +1,21 @@
 from enum import Enum
 from typing import Any, Optional
 
-from pydantic import BaseModel
+from pydantic import AnyUrl, BaseModel
 
 from microservice_social_sweat.services.activities.models import SportType
 
 
+class UserSocialMedias(BaseModel):
+    user_youtube: Optional[AnyUrl] = None
+    user_instagram: Optional[AnyUrl] = None
+    user_facebook: Optional[AnyUrl] = None
+    user_tiktok: Optional[AnyUrl] = None
+    user_strava: Optional[AnyUrl] = None
+
+
 class FilterUser(BaseModel):
-    role: str
+    role: Optional[str] = None
 
 
 class Role(str, Enum):
@@ -18,8 +26,10 @@ class Role(str, Enum):
 
 class UserMetadata(BaseModel):
     role: Role
-    sports: Optional[list[SportType]]
+    sports: list[Optional[SportType]] = []
     birth_date: str
+    user_social_medias: UserSocialMedias = UserSocialMedias()
+    profile_description: Optional[str] = None
 
 
 class UserModel(BaseModel):
@@ -36,14 +46,21 @@ class UserModel(BaseModel):
 
     @staticmethod
     def from_clerk_user_request(user: dict[str, Any]) -> "UserModel":
-        role = user.get("unsafe_metadata", {}).get("role")
-        sports = user.get("unsafe_metadata", {}).get("sports")
-        birth_date = user.get("unsafe_metadata", {}).get("birth_date")
+        unsafe_metadata = user.get("unsafe_metadata", {})
+
+        role = unsafe_metadata.get("role")
+        sports = unsafe_metadata.get("sports", [])
+        birth_date = unsafe_metadata.get("birth_date")
+        profile_description = unsafe_metadata.get("profile_description")
+
+        user_social_medias = UserSocialMedias(**unsafe_metadata.get("user_social_medias", {}))
 
         user_metadata = UserMetadata(
             role=role,
             sports=sports,
             birth_date=birth_date,
+            profile_description=profile_description,
+            user_social_medias=user_social_medias,
         )
 
         return UserModel(
