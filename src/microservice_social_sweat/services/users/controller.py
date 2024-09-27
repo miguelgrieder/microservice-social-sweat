@@ -40,30 +40,8 @@ def load_users_from_clerk(filteruser: FilterUser) -> list[UserModel]:
 
         for user in users:
             role = user.get("unsafe_metadata", {}).get("role")
-            if filteruser.unsafe_metadata_role and role == filteruser.unsafe_metadata_role:
-                # Extract required fields
-                user_model = UserModel(
-                    id=user["id"],
-                    public_metadata=user.get("public_metadata", {}),
-                    private_metadata=user.get("private_metadata"),
-                    unsafe_metadata=user.get("unsafe_metadata", {}),
-                    email_address=(
-                        user.get("email_addresses", [{}])[0].get("email_address")
-                        if user.get("email_addresses")
-                        else None
-                    ),
-                    phone_number=(
-                        user.get("phone_numbers", [{}])[0].get("phone_number")
-                        if user.get("phone_numbers")
-                        else None
-                    ),
-                    image_url=user.get("image_url"),
-                    username=user.get("username"),
-                    first_name=user.get("first_name"),
-                    last_name=user.get("last_name"),
-                    last_active_at=user.get("last_active_at"),
-                    created_at=user.get("created_at"),
-                )
+            if filteruser.role and role == filteruser.role:
+                user_model = UserModel.from_clerk_user_request(user)
                 matched_users.append(user_model)
 
         users_list.extend(matched_users)
