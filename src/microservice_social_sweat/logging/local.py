@@ -5,7 +5,7 @@ from microservice_social_sweat import config
 
 settings = config.get_settings()
 
-_THIRD_PARTY_LOG_NAMES: dict[str, str] = {}
+_THIRD_PARTY_LOG_NAMES: set[str] = {"clerk_backend_api"}
 
 _FIRST_PARTY_LOG_NAME = __package__.partition(".")[0]
 
