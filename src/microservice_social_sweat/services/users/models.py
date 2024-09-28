@@ -84,3 +84,18 @@ class UserModel(BaseModel):
             last_active_at=user.get("last_active_at"),
             created_at=user.get("created_at"),
         )
+
+
+class UpdateUserMetadata(BaseModel):
+    role: Optional[Role] = None
+    sports: Optional[list[Optional[SportType]]] = None
+    birth_date: Optional[str] = None  # Expected format: 'YYYY/MM/DD'
+    user_social_medias: Optional[UserSocialMedias] = None
+    profile_description: Optional[str] = None
+
+
+class UpdateUserModel(BaseModel):
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    username: Optional[str] = None
+    user_metadata: Optional[UpdateUserMetadata] = None
