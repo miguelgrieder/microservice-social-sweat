@@ -73,6 +73,8 @@ lint.ignore = [
   "D203", # pydocstyle: one-blank-line-before-class
   "D213", # pydocstyle: multi-line-summary-second-line
   "ERA001", # commented-out code
+  "TRY002", # general exception
+  "TRY003", # long messages in the exception class
 ]
 line-length = 100
 

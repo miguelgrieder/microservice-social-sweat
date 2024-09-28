@@ -11,6 +11,45 @@ settings = config.get_settings()
 log = logging.getLogger(__name__)
 
 
+def user_matches_filters(user_model: UserModel, filteruser: FilterUser) -> bool:
+    if filteruser.id and user_model.id != filteruser.id:
+        return False
+    if filteruser.role and user_model.user_metadata.role != filteruser.role:
+        return False
+    return True
+
+
+def fetch_all_users_from_clerk(headers: dict[str, str]) -> list[dict[str, str]]:
+    all_users = []
+    limit = 100
+    offset = 0
+
+    while True:
+        params = {"limit": limit, "offset": offset}
+        response = requests.get(
+            f"{settings.clerk_api_url}/users",
+            headers=headers,
+            params=params,
+            timeout=20,
+        )
+        if response.status_code != 200:
+            raise Exception(f"Failed to fetch users: {response.status_code} {response.text}")
+
+        users = response.json()
+
+        if not users:
+            break
+
+        all_users.extend(users)
+
+        if len(users) < limit:
+            break
+
+        offset += limit
+
+    return all_users
+
+
 def load_users_from_clerk(filteruser: FilterUser) -> list[UserModel]:
     headers = {
         "Authorization": f"Bearer {settings.clerk_api_secret_key}",
@@ -18,38 +57,28 @@ def load_users_from_clerk(filteruser: FilterUser) -> list[UserModel]:
     }
 
     users_list = []
-    limit = 100
-    offset = 0
 
-    while True:
-        matched_users = []
-        params = {"limit": limit, "offset": offset}
-
+    # Fetch the user directly by ID
+    if filteruser.id:
         response = requests.get(
-            f"{settings.clerk_api_url}/users", headers=headers, params=params, timeout=20
+            f"{settings.clerk_api_url}/users/{filteruser.id}",
+            headers=headers,
+            timeout=20,
         )
         if response.status_code != 200:
-            raise Exception(  # noqa: TRY002, TRY003
-                f"Failed to fetch users: {response.status_code} {response.text}"
-            )
+            raise Exception(f"Failed to fetch user: {response.status_code} {response.text}")
+        user_data = response.json()
+        user_model = UserModel.from_clerk_user_request(user_data)
+        if user_matches_filters(user_model, filteruser):
+            users_list.append(user_model)
+        return users_list
 
-        users = response.json()
-
-        if not users:
-            break
-
-        for user in users:
-            role = user.get("unsafe_metadata", {}).get("role")
-            if filteruser.role and role == filteruser.role:
-                user_model = UserModel.from_clerk_user_request(user)
-                matched_users.append(user_model)
-
-        users_list.extend(matched_users)
-
-        if len(users) < limit:
-            break
-
-        offset += limit
+    # Fetch all users and filter them
+    all_users = fetch_all_users_from_clerk(headers)
+    for user in all_users:
+        user_model = UserModel.from_clerk_user_request(user)
+        if user_matches_filters(user_model, filteruser):
+            users_list.append(user_model)
 
     return users_list
 

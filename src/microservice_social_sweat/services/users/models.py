@@ -16,6 +16,7 @@ class UserSocialMedias(BaseModel):
 
 class FilterUser(BaseModel):
     role: Optional[str] = None
+    id: Optional[str] = None
 
 
 class Role(str, Enum):
