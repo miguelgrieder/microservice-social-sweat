@@ -82,10 +82,7 @@ class Reviews(BaseModel):
 
 
 class Host(BaseModel):
-    host_picture_url: str
-    host_name: str
-    host_since: str
-
+    host_user_id: str
 
 class DateTimes(BaseModel):
     datetime_created: str
