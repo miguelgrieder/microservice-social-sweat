@@ -10,7 +10,7 @@ from microservice_social_sweat import config
 from microservice_social_sweat.services.activities.models import (
     Activity,
     FilterActivity,
-    UserJoinActivity,
+    UserInteractActivityInput,
 )
 
 from . import models
@@ -56,9 +56,12 @@ def create_activity(create_activity_input: models.CreateActivityInput) -> Any:
         raise err  # noqa: TRY201
 
 
-def user_join_activity(request: Request, user_join_activity: UserJoinActivity) -> dict[str, str]:
+def user_interact_activity(
+    request: Request, user_interact_activity_input: UserInteractActivityInput
+) -> dict[str, str]:
     activity = filter_activities(
-        request=request, filter_activity=FilterActivity(activity_id=user_join_activity.activity_id)
+        request=request,
+        filter_activity=FilterActivity(activity_id=user_interact_activity_input.activity_id),
     )
 
     if not activity or not activity.get("activities"):
@@ -69,28 +72,47 @@ def user_join_activity(request: Request, user_join_activity: UserJoinActivity) -
     participants_user_ids: list[Optional[str]] = activity_data.participants.participants_user_id
     max_participants: Optional[int] = activity_data.participants.max
 
-    if user_join_activity.user_id in participants_user_ids:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="User already joined the activity"
-        )
+    if user_interact_activity_input.action == "join":
+        if user_interact_activity_input.user_id in participants_user_ids:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="User already joined the activity"
+            )
 
-    if max_participants is not None and len(participants_user_ids) >= max_participants:
+        if max_participants is not None and len(participants_user_ids) >= max_participants:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Activity has reached its maximum number of participants",
+            )
+
+        participants_user_ids.append(user_interact_activity_input.user_id)
+        update_activity_participants(
+            participants_user_ids, user_interact_activity_input.activity_id
+        )
+        return {"message": "User successfully joined the activity"}
+
+    elif user_interact_activity_input.action == "leave":
+        if user_interact_activity_input.user_id not in participants_user_ids:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="User is not a participant of the activity",
+            )
+
+        participants_user_ids.remove(user_interact_activity_input.user_id)
+        update_activity_participants(
+            participants_user_ids, user_interact_activity_input.activity_id
+        )
+        return {"message": "User successfully left the activity"}
+
+    else:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Activity has reached its maximum number of participants",
+            detail=f"Invalid action '{user_interact_activity_input.action}'",
         )
 
-    participants_user_ids.append(user_join_activity.user_id)
-    update_activity_participants(participants_user_ids, user_join_activity)
 
-    return {"message": "User successfully joined the activity"}
-
-
-def update_activity_participants(
-    participants: list[Optional[str]], user_join_activity: UserJoinActivity
-) -> None:
+def update_activity_participants(participants: list[Optional[str]], activity_id: str) -> None:
     update_result = db.activities.update_one(
-        {"id": user_join_activity.activity_id},
+        {"id": activity_id},
         {"$set": {"participants.participants_user_id": participants}},
     )
     if update_result.modified_count == 0:

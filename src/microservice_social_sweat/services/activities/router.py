@@ -37,11 +37,13 @@ def create_activity(create_activity_input: models.CreateActivityInput) -> Any:
     return result
 
 
-@router.post("/user_join_activity")
-async def user_join_activity(request: Request, user_join_activity: models.UserJoinActivity) -> Any:
+@router.post("/user_interact_activity")
+async def user_interact_activity(
+    request: Request, user_interact_activity_input: models.UserInteractActivityInput
+) -> Any:
     try:
-        result = controller.user_join_activity(
-            request=request, user_join_activity=user_join_activity
+        result = controller.user_interact_activity(
+            request=request, user_interact_activity_input=user_interact_activity_input
         )
     except requests.exceptions.HTTPError as e:
         raise HTTPException(

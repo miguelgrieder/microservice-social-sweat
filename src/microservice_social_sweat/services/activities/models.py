@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List, Optional
+from typing import List, Literal, Optional
 
 from pydantic import BaseModel
 
@@ -8,9 +8,10 @@ class FilterActivity(BaseModel):
     activity_id: Optional[str]
 
 
-class UserJoinActivity(BaseModel):
+class UserInteractActivityInput(BaseModel):
     user_id: str
     activity_id: str
+    action: Literal["join", "leave"]
 
 
 class SportType(str, Enum):
