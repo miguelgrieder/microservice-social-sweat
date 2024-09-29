@@ -8,6 +8,11 @@ class FilterActivity(BaseModel):
     activity_id: Optional[str]
 
 
+class UserJoinActivity(BaseModel):
+    user_id: str
+    activity_id: str
+
+
 class SportType(str, Enum):
     gym = "gym"
     basketball = "basketball"
@@ -83,6 +88,7 @@ class Reviews(BaseModel):
 
 class Host(BaseModel):
     host_user_id: str
+
 
 class DateTimes(BaseModel):
     datetime_created: str
