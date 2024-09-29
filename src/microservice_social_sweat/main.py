@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import microservice_social_sweat
 from microservice_social_sweat import api, config
 from microservice_social_sweat.lifespan import lifespan
+from microservice_social_sweat.middlewares.clerk_middleware import ClerkMiddleware
 
 log = logging.getLogger(__name__)
 
@@ -37,6 +38,8 @@ app.add_middleware(
     allow_headers=["*"],
     allow_credentials=True,
 )
+
+app.add_middleware(ClerkMiddleware)
 
 
 @app.get("/health_check")

@@ -8,6 +8,11 @@ class FilterActivity(BaseModel):
     activity_id: Optional[str]
 
 
+class UserJoinActivity(BaseModel):
+    user_id: str
+    activity_id: str
+
+
 class SportType(str, Enum):
     gym = "gym"
     basketball = "basketball"
@@ -72,7 +77,7 @@ class Price(BaseModel):
 
 
 class Participants(BaseModel):
-    current: int
+    participants_user_id: list[Optional[str]] = []
     max: Optional[int] = None
 
 
@@ -82,9 +87,7 @@ class Reviews(BaseModel):
 
 
 class Host(BaseModel):
-    host_picture_url: str
-    host_name: str
-    host_since: str
+    host_user_id: str
 
 
 class DateTimes(BaseModel):

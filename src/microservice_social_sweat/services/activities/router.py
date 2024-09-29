@@ -35,3 +35,18 @@ def create_activity(create_activity_input: models.CreateActivityInput) -> Any:
         ) from e
 
     return result
+
+
+@router.post("/user_join_activity")
+async def user_join_activity(request: Request, user_join_activity: models.UserJoinActivity) -> Any:
+    try:
+        result = controller.user_join_activity(
+            request=request, user_join_activity=user_join_activity
+        )
+    except requests.exceptions.HTTPError as e:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=[{"msg": "HTTPError at external API call."}],
+        ) from e
+
+    return result

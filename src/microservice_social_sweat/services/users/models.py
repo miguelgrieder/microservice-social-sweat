@@ -1,13 +1,22 @@
 from enum import Enum
 from typing import Any, Optional
 
-from pydantic import BaseModel
+from pydantic import AnyUrl, BaseModel
 
 from microservice_social_sweat.services.activities.models import SportType
 
 
+class UserSocialMedias(BaseModel):
+    user_youtube: Optional[AnyUrl] = None
+    user_instagram: Optional[AnyUrl] = None
+    user_facebook: Optional[AnyUrl] = None
+    user_tiktok: Optional[AnyUrl] = None
+    user_strava: Optional[AnyUrl] = None
+
+
 class FilterUser(BaseModel):
-    role: str
+    role: Optional[str] = None
+    id: Optional[str] = None
 
 
 class Role(str, Enum):
@@ -18,8 +27,10 @@ class Role(str, Enum):
 
 class UserMetadata(BaseModel):
     role: Role
-    sports: Optional[list[SportType]]
+    sports: list[Optional[SportType]] = []
     birth_date: str
+    user_social_medias: UserSocialMedias = UserSocialMedias()
+    profile_description: Optional[str] = None
 
 
 class UserModel(BaseModel):
@@ -36,14 +47,21 @@ class UserModel(BaseModel):
 
     @staticmethod
     def from_clerk_user_request(user: dict[str, Any]) -> "UserModel":
-        role = user.get("unsafe_metadata", {}).get("role")
-        sports = user.get("unsafe_metadata", {}).get("sports")
-        birth_date = user.get("unsafe_metadata", {}).get("birth_date")
+        unsafe_metadata = user.get("unsafe_metadata", {})
+
+        role = unsafe_metadata.get("role")
+        sports = unsafe_metadata.get("sports", [])
+        birth_date = unsafe_metadata.get("birth_date")
+        profile_description = unsafe_metadata.get("profile_description")
+
+        user_social_medias = UserSocialMedias(**unsafe_metadata.get("user_social_medias", {}))
 
         user_metadata = UserMetadata(
             role=role,
             sports=sports,
             birth_date=birth_date,
+            profile_description=profile_description,
+            user_social_medias=user_social_medias,
         )
 
         return UserModel(
@@ -66,3 +84,18 @@ class UserModel(BaseModel):
             last_active_at=user.get("last_active_at"),
             created_at=user.get("created_at"),
         )
+
+
+class UpdateUserMetadata(BaseModel):
+    role: Optional[Role] = None
+    sports: Optional[list[Optional[SportType]]] = None
+    birth_date: Optional[str] = None  # Expected format: 'YYYY/MM/DD'
+    user_social_medias: Optional[UserSocialMedias] = None
+    profile_description: Optional[str] = None
+
+
+class UpdateUserModel(BaseModel):
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    username: Optional[str] = None
+    user_metadata: Optional[UpdateUserMetadata] = None
