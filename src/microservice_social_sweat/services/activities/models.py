@@ -72,7 +72,7 @@ class Price(BaseModel):
 
 
 class Participants(BaseModel):
-    current: int
+    participants_user_id: list[Optional[str]] = []
     max: Optional[int] = None
 
 
