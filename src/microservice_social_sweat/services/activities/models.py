@@ -4,10 +4,6 @@ from typing import List, Literal, Optional
 from pydantic import BaseModel
 
 
-class FilterActivity(BaseModel):
-    activity_id: Optional[str]
-
-
 class UserInteractActivityInput(BaseModel):
     user_id: str
     activity_id: str
@@ -116,3 +112,15 @@ class Activity(BaseModel):
 
 class CreateActivityInput(BaseModel):
     activity: Activity
+
+
+class FilterActivity(BaseModel):
+    activity_id: Optional[str] = None
+    participant_user_id: Optional[str] = None
+    host_user_id: Optional[str] = None
+    activity_type: Optional[ActivityType] = None
+    price: Optional[float] = None
+    sport_types: Optional[List[SportType]] = None
+
+    class Config:
+        use_enum_values = True

@@ -29,10 +29,26 @@ db = client["social_sweat"]
 activity_collection: Collection[dict[str, Any]] = db["activities"]
 
 
-def load_activities_from_mongodb(filter_activity: FilterActivity) -> list[models.Activity]:
-    query = {"enabled": True}
+def load_activities_from_mongodb(filter_activity: FilterActivity) -> list[Activity]:
+    query: dict[str, Any] = {"enabled": True}
+
     if filter_activity.activity_id:
-        query["id"] = str(filter_activity.activity_id)  # type: ignore[assignment]
+        query["id"] = filter_activity.activity_id
+
+    if filter_activity.participant_user_id:
+        query["participants.participants_user_id"] = filter_activity.participant_user_id
+
+    if filter_activity.host_user_id:
+        query["host.host_user_id"] = filter_activity.host_user_id
+
+    if filter_activity.activity_type:
+        query["activity_type"] = filter_activity.activity_type
+
+    if filter_activity.price:
+        query["price.value"] = int(filter_activity.price)  # TODO: Be float!
+
+    if filter_activity.sport_types:
+        query["sport_type"] = {"$in": filter_activity.sport_types}
 
     # Fetch data from MongoDB
     cursor: Cursor[Any] = activity_collection.find(query)
