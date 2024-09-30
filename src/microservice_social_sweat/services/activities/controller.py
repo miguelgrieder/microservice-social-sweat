@@ -7,13 +7,7 @@ from pymongo.collection import Collection
 from pymongo.cursor import Cursor
 
 from microservice_social_sweat import config
-from microservice_social_sweat.services.activities.models import (
-    Activity,
-    FilterActivity,
-    UserInteractActivityInput,
-)
-
-from . import models
+from microservice_social_sweat.services.activities import models
 
 settings = config.get_settings()
 log = logging.getLogger(__name__)
@@ -29,26 +23,28 @@ db = client["social_sweat"]
 activity_collection: Collection[dict[str, Any]] = db["activities"]
 
 
-def load_activities_from_mongodb(filter_activity: FilterActivity) -> list[Activity]:
+def load_activities_from_mongodb(
+    filter_activity_input: models.FilterActivityInput,
+) -> list[models.Activity]:
     query: dict[str, Any] = {"enabled": True}
 
-    if filter_activity.activity_id:
-        query["id"] = filter_activity.activity_id
+    if filter_activity_input.activity_id:
+        query["id"] = filter_activity_input.activity_id
 
-    if filter_activity.participant_user_id:
-        query["participants.participants_user_id"] = filter_activity.participant_user_id
+    if filter_activity_input.participant_user_id:
+        query["participants.participants_user_id"] = filter_activity_input.participant_user_id
 
-    if filter_activity.host_user_id:
-        query["host.host_user_id"] = filter_activity.host_user_id
+    if filter_activity_input.host_user_id:
+        query["host.host_user_id"] = filter_activity_input.host_user_id
 
-    if filter_activity.activity_type:
-        query["activity_type"] = filter_activity.activity_type
+    if filter_activity_input.activity_type:
+        query["activity_type"] = filter_activity_input.activity_type
 
-    if filter_activity.price:
-        query["price.value"] = int(filter_activity.price)  # TODO: Be float!
+    if filter_activity_input.price:
+        query["price.value"] = int(filter_activity_input.price)  # TODO: Be float!
 
-    if filter_activity.sport_types:
-        query["sport_type"] = {"$in": filter_activity.sport_types}
+    if filter_activity_input.sport_types:
+        query["sport_type"] = {"$in": filter_activity_input.sport_types}
 
     # Fetch data from MongoDB
     cursor: Cursor[Any] = activity_collection.find(query)
@@ -56,8 +52,8 @@ def load_activities_from_mongodb(filter_activity: FilterActivity) -> list[Activi
     return activities
 
 
-def filter_activities(request: Request, filter_activity: FilterActivity) -> Any:
-    activities = load_activities_from_mongodb(filter_activity)
+def filter_activities(request: Request, filter_activity_input: models.FilterActivityInput) -> Any:
+    activities = load_activities_from_mongodb(filter_activity_input)
     return {"activities": activities}
 
 
@@ -73,17 +69,19 @@ def create_activity(create_activity_input: models.CreateActivityInput) -> Any:
 
 
 def user_interact_activity(
-    request: Request, user_interact_activity_input: UserInteractActivityInput
+    request: Request, user_interact_activity_input: models.UserInteractActivityInput
 ) -> dict[str, str]:
     activity = filter_activities(
         request=request,
-        filter_activity=FilterActivity(activity_id=user_interact_activity_input.activity_id),
+        filter_activity_input=models.FilterActivityInput(
+            activity_id=user_interact_activity_input.activity_id
+        ),
     )
 
     if not activity or not activity.get("activities"):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Activity not found")
 
-    activity_data: Activity = activity["activities"][0]
+    activity_data: models.Activity = activity["activities"][0]
 
     participants_user_ids: list[Optional[str]] = activity_data.participants.participants_user_id
     max_participants: Optional[int] = activity_data.participants.max

@@ -114,7 +114,7 @@ class CreateActivityInput(BaseModel):
     activity: Activity
 
 
-class FilterActivity(BaseModel):
+class FilterActivityInput(BaseModel):
     activity_id: Optional[str] = None
     participant_user_id: Optional[str] = None
     host_user_id: Optional[str] = None
