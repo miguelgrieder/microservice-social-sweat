@@ -1,3 +1,4 @@
+from datetime import datetime
 from enum import Enum
 from typing import List, Literal, Optional
 
@@ -121,6 +122,8 @@ class FilterActivityInput(BaseModel):
     activity_type: Optional[ActivityType] = None
     price: Optional[float] = None
     sport_types: Optional[List[SportType]] = None
+    datetime_start: Optional[datetime] = None
+    datetime_finish: Optional[datetime] = None
 
     class Config:
         use_enum_values = True
