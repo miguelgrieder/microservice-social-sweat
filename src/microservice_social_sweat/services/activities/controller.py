@@ -40,7 +40,7 @@ def load_activities_from_mongodb(
     if filter_activity_input.activity_type:
         query["activity_type"] = filter_activity_input.activity_type
 
-    if filter_activity_input.price:
+    if filter_activity_input.price is not None:
         query["price.value"] = int(filter_activity_input.price)  # TODO: Be float!
 
     if filter_activity_input.sport_types:
