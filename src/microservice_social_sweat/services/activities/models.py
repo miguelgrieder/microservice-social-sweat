@@ -91,8 +91,8 @@ class Host(BaseModel):
 class DateTimes(BaseModel):
     datetime_created: str
     datetime_deleted: Optional[str] = None
-    datetime_start: str
-    datetime_finish: str
+    datetime_start: Optional[str] = None
+    datetime_finish: Optional[str] = None
 
 
 class Activity(BaseModel):
