@@ -100,6 +100,7 @@ class Activity(BaseModel):
     enabled: bool
     name: str
     description: str
+    description_private: Optional[str] = None
     activity_type: ActivityType
     sport_type: SportType
     price: Price
