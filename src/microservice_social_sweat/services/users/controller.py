@@ -18,6 +18,8 @@ log = logging.getLogger(__name__)
 def user_matches_filters(user_model: UserModel, filter_user_input: FilterUserInput) -> bool:
     if filter_user_input.id and user_model.id != filter_user_input.id:
         return False
+    if filter_user_input.username and filter_user_input.username not in user_model.username:
+        return False
     if filter_user_input.role and user_model.user_metadata.role != filter_user_input.role:
         return False
     if (

@@ -17,6 +17,7 @@ class UserSocialMedias(BaseModel):
 class FilterUserInput(BaseModel):
     role: Optional[str] = None
     id: Optional[str] = None
+    username: Optional[str] = None
     sport_type: Optional[SportType] = None
 
 
