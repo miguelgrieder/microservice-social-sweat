@@ -92,7 +92,7 @@ def load_users_from_clerk(filter_user_input: FilterUserInput) -> list[UserModel]
 
 def filter_users(request: Request, filter_user_input: FilterUserInput) -> Any:
     users = load_users_from_clerk(filter_user_input)
-    return {"users": users}
+    return {"num_items": len(users), "users": users}
 
 
 def update_user(request: Request, user_id: str, update_data: UpdateUserModel) -> Any:
