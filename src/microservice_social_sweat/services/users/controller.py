@@ -80,9 +80,12 @@ def load_users_from_clerk(filteruser: FilterUser) -> list[UserModel]:
     # Fetch all users and filter them
     all_users = fetch_all_users_from_clerk(headers)
     for user in all_users:
-        user_model = UserModel.from_clerk_user_request(user)
-        if user_matches_filters(user_model, filteruser):
-            users_list.append(user_model)
+        try:
+            user_model = UserModel.from_clerk_user_request(user)
+            if user_matches_filters(user_model, filteruser):
+                users_list.append(user_model)
+        except:
+            log.exception(f"Failed to load cler user {user}")
 
     return users_list
 
