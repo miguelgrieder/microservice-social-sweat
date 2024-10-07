@@ -20,6 +20,12 @@ def user_matches_filters(user_model: UserModel, filter_user_input: FilterUserInp
         return False
     if filter_user_input.role and user_model.user_metadata.role != filter_user_input.role:
         return False
+    if (
+        filter_user_input.sport_type
+        and user_model.user_metadata.sports
+        and filter_user_input.sport_type not in user_model.user_metadata.sports
+    ):
+        return False
     return True
 
 
