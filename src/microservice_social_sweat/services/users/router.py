@@ -12,9 +12,9 @@ router = APIRouter()
 
 
 @router.post("/")
-def filter_users(request: Request, filter_user: models.FilterUser) -> Any:
+def filter_users(request: Request, filter_user_input: models.FilterUserInput) -> Any:
     try:
-        result = controller.filter_users(request=request, filter_user=filter_user)
+        result = controller.filter_users(request=request, filter_user_input=filter_user_input)
     except requests.exceptions.HTTPError as e:
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,

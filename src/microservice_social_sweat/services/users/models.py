@@ -14,7 +14,7 @@ class UserSocialMedias(BaseModel):
     user_strava: Optional[AnyUrl] = None
 
 
-class FilterUser(BaseModel):
+class FilterUserInput(BaseModel):
     role: Optional[str] = None
     id: Optional[str] = None
 

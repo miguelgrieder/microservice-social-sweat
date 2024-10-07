@@ -6,7 +6,7 @@ from fastapi import HTTPException, Request
 
 from microservice_social_sweat import config
 from microservice_social_sweat.services.users.models import (
-    FilterUser,
+    FilterUserInput,
     UpdateUserModel,
     UserModel,
 )
@@ -15,10 +15,10 @@ settings = config.get_settings()
 log = logging.getLogger(__name__)
 
 
-def user_matches_filters(user_model: UserModel, filteruser: FilterUser) -> bool:
-    if filteruser.id and user_model.id != filteruser.id:
+def user_matches_filters(user_model: UserModel, filter_user_input: FilterUserInput) -> bool:
+    if filter_user_input.id and user_model.id != filter_user_input.id:
         return False
-    if filteruser.role and user_model.user_metadata.role != filteruser.role:
+    if filter_user_input.role and user_model.user_metadata.role != filter_user_input.role:
         return False
     return True
 
@@ -54,7 +54,7 @@ def fetch_all_users_from_clerk(headers: dict[str, str]) -> list[dict[str, str]]:
     return all_users
 
 
-def load_users_from_clerk(filteruser: FilterUser) -> list[UserModel]:
+def load_users_from_clerk(filter_user_input: FilterUserInput) -> list[UserModel]:
     headers = {
         "Authorization": f"Bearer {settings.clerk_api_secret_key}",
         "Content-Type": "application/json",
@@ -63,9 +63,9 @@ def load_users_from_clerk(filteruser: FilterUser) -> list[UserModel]:
     users_list = []
 
     # Fetch the user directly by ID
-    if filteruser.id:
+    if filter_user_input.id:
         response = requests.get(
-            f"{settings.clerk_api_url}/users/{filteruser.id}",
+            f"{settings.clerk_api_url}/users/{filter_user_input.id}",
             headers=headers,
             timeout=20,
         )
@@ -73,7 +73,7 @@ def load_users_from_clerk(filteruser: FilterUser) -> list[UserModel]:
             raise Exception(f"Failed to fetch user: {response.status_code} {response.text}")
         user_data = response.json()
         user_model = UserModel.from_clerk_user_request(user_data)
-        if user_matches_filters(user_model, filteruser):
+        if user_matches_filters(user_model, filter_user_input):
             users_list.append(user_model)
         return users_list
 
@@ -82,7 +82,7 @@ def load_users_from_clerk(filteruser: FilterUser) -> list[UserModel]:
     for user in all_users:
         try:
             user_model = UserModel.from_clerk_user_request(user)
-            if user_matches_filters(user_model, filteruser):
+            if user_matches_filters(user_model, filter_user_input):
                 users_list.append(user_model)
         except:
             log.exception(f"Failed to load cler user {user}")
@@ -90,8 +90,8 @@ def load_users_from_clerk(filteruser: FilterUser) -> list[UserModel]:
     return users_list
 
 
-def filter_users(request: Request, filter_user: FilterUser) -> Any:
-    users = load_users_from_clerk(filter_user)
+def filter_users(request: Request, filter_user_input: FilterUserInput) -> Any:
+    users = load_users_from_clerk(filter_user_input)
     return {"users": users}
 
 
