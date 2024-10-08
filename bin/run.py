@@ -1,4 +1,3 @@
-import uvicorn
 import uvicorn.config
 
 from microservice_social_sweat import config
