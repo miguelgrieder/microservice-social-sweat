@@ -46,19 +46,41 @@ def load_activities_from_mongodb(
     if filter_activity_input.sport_types:
         query["sport_type"] = {"$in": filter_activity_input.sport_types}
 
+    # Initialize datetime filter conditions
+    datetime_filters: dict[str, Any] = {}
+
     if filter_activity_input.datetime_start:
-        query["datetimes.datetime_start"] = {
+        datetime_filters["datetimes.datetime_start"] = {
             "$gte": filter_activity_input.datetime_start.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
         }
 
     if filter_activity_input.datetime_finish:
-        query["datetimes.datetime_finish"] = {
+        datetime_filters["datetimes.datetime_finish"] = {
             "$lte": filter_activity_input.datetime_finish.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3]
             + "Z"
         }
 
+    # Apply conditional datetime filters only if activity_type is not 'spot'
+    if datetime_filters:
+        # Construct the conditional part of the query
+        conditional_query = {
+            "$or": [
+                {"activity_type": "spot"},  # If activity_type is 'spot', ignore datetime filters
+                {
+                    "activity_type": {"$ne": "spot"},  # If not 'spot', apply datetime filters
+                    **datetime_filters,
+                },
+            ]
+        }
+
+        # Combine the base query with the conditional query using $and
+        combined_query = {"$and": [query, conditional_query]}
+    else:
+        # If no datetime filters, use the base query as is
+        combined_query = query
+
     # Fetch data from MongoDB
-    cursor: Cursor[Any] = activity_collection.find(query)
+    cursor: Cursor[Any] = activity_collection.find(combined_query)
     activities = [models.Activity(**activity) for activity in cursor]
     return activities
 
