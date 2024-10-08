@@ -65,7 +65,7 @@ def load_activities_from_mongodb(
 
 def filter_activities(request: Request, filter_activity_input: models.FilterActivityInput) -> Any:
     activities = load_activities_from_mongodb(filter_activity_input)
-    return {"activities": activities}
+    return {"num_items": len(activities), "activities": activities}
 
 
 def create_activity(create_activity_input: models.CreateActivityInput) -> Any:
