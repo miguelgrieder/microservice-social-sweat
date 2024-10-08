@@ -46,6 +46,17 @@ def load_activities_from_mongodb(
     if filter_activity_input.sport_types:
         query["sport_type"] = {"$in": filter_activity_input.sport_types}
 
+    if filter_activity_input.datetime_start:
+        query["datetimes.datetime_start"] = {
+            "$gte": filter_activity_input.datetime_start.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
+        }
+
+    if filter_activity_input.datetime_finish:
+        query["datetimes.datetime_finish"] = {
+            "$lte": filter_activity_input.datetime_finish.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3]
+            + "Z"
+        }
+
     # Fetch data from MongoDB
     cursor: Cursor[Any] = activity_collection.find(query)
     activities = [models.Activity(**activity) for activity in cursor]
