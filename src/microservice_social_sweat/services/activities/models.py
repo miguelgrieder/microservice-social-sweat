@@ -118,6 +118,7 @@ class CreateActivityInput(BaseModel):
 
 class FilterActivityInput(BaseModel):
     activity_id: Optional[str] = None
+    activity_name: Optional[str] = None
     participant_user_id: Optional[str] = None
     host_user_id: Optional[str] = None
     activity_type: Optional[ActivityType] = None

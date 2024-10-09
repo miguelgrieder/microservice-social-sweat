@@ -31,6 +31,9 @@ def load_activities_from_mongodb(
     if filter_activity_input.activity_id:
         query["id"] = filter_activity_input.activity_id
 
+    if filter_activity_input.activity_name:
+        query["name"] = {"$regex": filter_activity_input.activity_name, "$options": "i"}
+
     if filter_activity_input.participant_user_id:
         query["participants.participants_user_id"] = filter_activity_input.participant_user_id
 
