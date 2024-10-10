@@ -108,3 +108,12 @@ class UpdateUserModel(BaseModel):
     last_name: Optional[str] = None
     username: Optional[str] = None
     user_metadata: Optional[UpdateUserMetadata] = None
+
+
+class UpdateUserResponse(BaseModel):
+    user: UserModel
+
+
+class FilterUserResponse(BaseModel):
+    num_items: int
+    users: list[UserModel]

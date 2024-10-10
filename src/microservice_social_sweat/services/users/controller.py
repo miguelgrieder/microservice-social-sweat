@@ -13,7 +13,9 @@ from microservice_social_sweat.services.activities.models import (
 )
 from microservice_social_sweat.services.users.models import (
     FilterUserInput,
+    FilterUserResponse,
     UpdateUserModel,
+    UpdateUserResponse,
     UserMetrics,
     UserModel,
 )
@@ -156,12 +158,12 @@ def load_users_from_clerk(request: Request, filter_user_input: FilterUserInput) 
     return users_list
 
 
-def filter_users(request: Request, filter_user_input: FilterUserInput) -> Any:
+def filter_users(request: Request, filter_user_input: FilterUserInput) -> FilterUserResponse:
     users = load_users_from_clerk(request, filter_user_input)
-    return {"num_items": len(users), "users": users}
+    return FilterUserResponse(num_items=len(users), users=users)
 
 
-def update_user(request: Request, user_id: str, update_data: UpdateUserModel) -> Any:
+def update_user(request: Request, user_id: str, update_data: UpdateUserModel) -> UpdateUserResponse:
 
     headers = {
         "Authorization": f"Bearer {settings.clerk_api_secret_key}",
@@ -186,7 +188,7 @@ def update_user(request: Request, user_id: str, update_data: UpdateUserModel) ->
     except requests.exceptions.RequestException as e:
         raise HTTPException(status_code=500, detail="Internal Server Error") from e
     else:
-        return {"user": updated_user}
+        return UpdateUserResponse(user=updated_user)
 
 
 def build_update_user_clerk_payload(

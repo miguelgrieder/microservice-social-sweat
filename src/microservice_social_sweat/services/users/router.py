@@ -12,7 +12,9 @@ router = APIRouter()
 
 
 @router.post("/")
-def filter_users(request: Request, filter_user_input: models.FilterUserInput) -> Any:
+def filter_users(
+    request: Request, filter_user_input: models.FilterUserInput
+) -> models.FilterUserResponse:
     try:
         result = controller.filter_users(request=request, filter_user_input=filter_user_input)
     except requests.exceptions.HTTPError as e:
