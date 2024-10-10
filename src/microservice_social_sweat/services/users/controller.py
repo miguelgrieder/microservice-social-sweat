@@ -1,13 +1,17 @@
 import logging
+from datetime import datetime, timezone
 from typing import Any
 
 import requests
 from fastapi import HTTPException, Request
 
 from microservice_social_sweat import config
+from microservice_social_sweat.services.activities.controller import filter_activities
+from microservice_social_sweat.services.activities.models import FilterActivityInput
 from microservice_social_sweat.services.users.models import (
     FilterUserInput,
     UpdateUserModel,
+    UserMetrics,
     UserModel,
 )
 
@@ -66,7 +70,37 @@ def fetch_all_users_from_clerk(headers: dict[str, str]) -> list[dict[str, str]]:
     return all_users
 
 
-def load_users_from_clerk(filter_user_input: FilterUserInput) -> list[UserModel]:
+def count_user_activities(data: Any, participants_user_id: str) -> dict[str, int]:
+    future_activities = 0
+    finished_activities = 0
+
+    now = datetime.now(timezone.utc)
+
+    for activity in data["activities"]:
+        participants = activity.participants.participants_user_id
+        if participants_user_id in participants:
+            datetime_start_str = activity.datetimes.datetime_start
+            if datetime_start_str is None:
+                future_activities += 1
+            else:
+                # Parse datetime_start
+                datetime_start = datetime.fromisoformat(datetime_start_str.replace("Z", "+00:00"))
+                if datetime_start > now:
+                    future_activities += 1
+
+            # Handle datetime_finish
+            datetime_finish_str = activity.datetimes.datetime_finish
+            if datetime_finish_str is None:
+                finished_activities += 1
+            else:
+                datetime_finish = datetime.fromisoformat(datetime_finish_str.replace("Z", "+00:00"))
+                if datetime_finish < now:
+                    finished_activities += 1
+
+    return {"future_activities": future_activities, "finished_activities": finished_activities}
+
+
+def load_users_from_clerk(request: Request, filter_user_input: FilterUserInput) -> list[UserModel]:
     headers = {
         "Authorization": f"Bearer {settings.clerk_api_secret_key}",
         "Content-Type": "application/json",
@@ -86,6 +120,21 @@ def load_users_from_clerk(filter_user_input: FilterUserInput) -> list[UserModel]
         user_data = response.json()
         user_model = UserModel.from_clerk_user_request(user_data)
         if user_matches_filters(user_model, filter_user_input):
+            activities_created = filter_activities(
+                request=request,
+                filter_activity_input=FilterActivityInput(host_user_id=user_model.id),
+            )["num_items"]
+            activities_participate = filter_activities(
+                request=request,
+                filter_activity_input=FilterActivityInput(participant_user_id=user_model.id),
+            )
+            user_activities_count = count_user_activities(activities_participate, user_model.id)
+
+            user_model.user_metadata.user_metrics = UserMetrics(
+                activities_created=activities_created,
+                activities_participated=user_activities_count["finished_activities"],
+                activities_participating=user_activities_count["future_activities"],
+            )
             users_list.append(user_model)
         return users_list
 
@@ -96,14 +145,14 @@ def load_users_from_clerk(filter_user_input: FilterUserInput) -> list[UserModel]
             user_model = UserModel.from_clerk_user_request(user)
             if user_matches_filters(user_model, filter_user_input):
                 users_list.append(user_model)
-        except:
+        except:  # noqa: E722
             log.exception(f"Failed to load cler user {user}")
 
     return users_list
 
 
 def filter_users(request: Request, filter_user_input: FilterUserInput) -> Any:
-    users = load_users_from_clerk(filter_user_input)
+    users = load_users_from_clerk(request, filter_user_input)
     return {"num_items": len(users), "users": users}
 
 

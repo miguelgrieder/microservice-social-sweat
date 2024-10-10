@@ -14,6 +14,12 @@ class UserSocialMedias(BaseModel):
     user_strava: Optional[AnyUrl] = None
 
 
+class UserMetrics(BaseModel):
+    activities_created: int = 0
+    activities_participated: int = 0
+    activities_participating: int = 0
+
+
 class FilterUserInput(BaseModel):
     role: Optional[str] = None
     id: Optional[str] = None
@@ -33,6 +39,7 @@ class UserMetadata(BaseModel):
     birth_date: str
     user_social_medias: UserSocialMedias = UserSocialMedias()
     profile_description: Optional[str] = None
+    user_metrics: UserMetrics = UserMetrics()
 
 
 class UserModel(BaseModel):
