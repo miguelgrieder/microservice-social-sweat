@@ -53,7 +53,7 @@ def load_activities_from_mongodb(
 
     # Fetch data from MongoDB
     cursor: Cursor[Any] = activity_collection.find(combined_query)
-    activities = [models.Activity(**activity) for activity in cursor]
+    activities: list[models.Activity] = [models.Activity(**activity) for activity in cursor]
     return activities
 
 
@@ -92,16 +92,20 @@ def combine_datetime_querys(
     return combined_query
 
 
-def filter_activities(request: Request, filter_activity_input: models.FilterActivityInput) -> Any:
+def filter_activities(
+    request: Request, filter_activity_input: models.FilterActivityInput
+) -> models.FilterActivityResponse:
     activities = load_activities_from_mongodb(filter_activity_input)
-    return {"num_items": len(activities), "activities": activities}
+    return models.FilterActivityResponse(num_items=len(activities), activities=activities)
 
 
-def create_activity(create_activity_input: models.CreateActivityInput) -> Any:
+def create_activity(
+    create_activity_input: models.CreateActivityInput,
+) -> models.CreateActivityResponse:
     try:
         activity_data = create_activity_input.activity.model_dump()
         result = activity_collection.insert_one(activity_data)
-        return {"id": str(result.inserted_id)}
+        return models.CreateActivityResponse(id=str(result.inserted_id))
     except Exception as err:
         error_message = "MongoDB create_activity - failed to create activity"
         log.exception(error_message)
@@ -118,10 +122,10 @@ def user_interact_activity(
         ),
     )
 
-    if not activity or not activity.get("activities"):
+    if activity.activities:
+        activity_data = activity.activities[0]
+    else:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Activity not found")
-
-    activity_data: models.Activity = activity["activities"][0]
 
     participants_user_ids: list[Optional[str]] = activity_data.participants.participants_user_id
     max_participants: Optional[int] = activity_data.participants.max

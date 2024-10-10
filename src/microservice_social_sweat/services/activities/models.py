@@ -116,6 +116,10 @@ class CreateActivityInput(BaseModel):
     activity: Activity
 
 
+class CreateActivityResponse(BaseModel):
+    id: str
+
+
 class FilterActivityInput(BaseModel):
     activity_id: Optional[str] = None
     activity_name: Optional[str] = None
@@ -129,3 +133,8 @@ class FilterActivityInput(BaseModel):
 
     class Config:
         use_enum_values = True
+
+
+class FilterActivityResponse(BaseModel):
+    num_items: int
+    activities: list[Activity]

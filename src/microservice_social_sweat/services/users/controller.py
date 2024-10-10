@@ -7,7 +7,10 @@ from fastapi import HTTPException, Request
 
 from microservice_social_sweat import config
 from microservice_social_sweat.services.activities.controller import filter_activities
-from microservice_social_sweat.services.activities.models import FilterActivityInput
+from microservice_social_sweat.services.activities.models import (
+    FilterActivityInput,
+    FilterActivityResponse,
+)
 from microservice_social_sweat.services.users.models import (
     FilterUserInput,
     UpdateUserModel,
@@ -70,13 +73,15 @@ def fetch_all_users_from_clerk(headers: dict[str, str]) -> list[dict[str, str]]:
     return all_users
 
 
-def count_user_activities(data: Any, participants_user_id: str) -> dict[str, int]:
+def count_user_activities(
+    filter_activity_response: FilterActivityResponse, participants_user_id: str
+) -> dict[str, int]:
     future_activities = 0
     finished_activities = 0
 
     now = datetime.now(timezone.utc)
 
-    for activity in data["activities"]:
+    for activity in filter_activity_response.activities:
         participants = activity.participants.participants_user_id
         if participants_user_id in participants:
             datetime_start_str = activity.datetimes.datetime_start
@@ -123,7 +128,7 @@ def load_users_from_clerk(request: Request, filter_user_input: FilterUserInput) 
             activities_created = filter_activities(
                 request=request,
                 filter_activity_input=FilterActivityInput(host_user_id=user_model.id),
-            )["num_items"]
+            ).num_items
             activities_participate = filter_activities(
                 request=request,
                 filter_activity_input=FilterActivityInput(participant_user_id=user_model.id),

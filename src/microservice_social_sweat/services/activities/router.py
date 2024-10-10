@@ -1,5 +1,4 @@
 import logging
-from typing import Any
 
 import requests
 from fastapi import APIRouter, HTTPException, Request, status
@@ -12,7 +11,9 @@ router = APIRouter()
 
 
 @router.post("/")
-def filter_activities(request: Request, filter_activity_input: models.FilterActivityInput) -> Any:
+def filter_activities(
+    request: Request, filter_activity_input: models.FilterActivityInput
+) -> models.FilterActivityResponse:
     try:
         result = controller.filter_activities(
             request=request, filter_activity_input=filter_activity_input
@@ -27,7 +28,9 @@ def filter_activities(request: Request, filter_activity_input: models.FilterActi
 
 
 @router.post("/create", status_code=status.HTTP_201_CREATED)
-def create_activity(create_activity_input: models.CreateActivityInput) -> Any:
+def create_activity(
+    create_activity_input: models.CreateActivityInput,
+) -> models.CreateActivityResponse:
     try:
         result = controller.create_activity(create_activity_input=create_activity_input)
     except requests.exceptions.HTTPError as e:
@@ -42,7 +45,7 @@ def create_activity(create_activity_input: models.CreateActivityInput) -> Any:
 @router.post("/user_interact_activity")
 async def user_interact_activity(
     request: Request, user_interact_activity_input: models.UserInteractActivityInput
-) -> Any:
+) -> dict[str, str]:
     try:
         result = controller.user_interact_activity(
             request=request, user_interact_activity_input=user_interact_activity_input
