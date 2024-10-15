@@ -47,9 +47,9 @@ app.add_middleware(
 def health_check() -> dict[str, str]:
     return {"ping": "pong"}
 
-@app.get("/env_test")
-def env_test():
-    return settings.model_dump()
+# @app.get("/env_test")
+# def env_test(token: str):
+#     return settings.model_dump()
 
 log.debug("Adding api router to the app")
 app.include_router(api.router)
