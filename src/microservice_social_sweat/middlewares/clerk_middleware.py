@@ -31,7 +31,7 @@ class ClerkMiddleware(BaseHTTPMiddleware):
         auth_header: Optional[str] = request.headers.get("Authorization")
         if not auth_header or not auth_header.startswith("Bearer "):
             raise HTTPException(status_code=401, detail="Unauthorized")
-        token: str = auth_header[len("Bearer ") :].strip()
+        token: str = auth_header.split("Bearer ")[1]
 
         try:
             res: Optional[Client] = self.clerk_client.clients.verify(request={"token": token})
