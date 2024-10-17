@@ -21,6 +21,9 @@ class ClerkMiddleware(BaseHTTPMiddleware):
         )
 
     async def dispatch(self, request: Request, call_next: Callable[[Request], Any]) -> Any:
+        if request.url.path in ["/docs", "/openapi.json"]:
+            response = await call_next(request)
+            return response
         if request.method == "OPTIONS":
             # Allow preflight requests to pass through without authentication
             return await call_next(request)
