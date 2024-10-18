@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime, timezone
 from typing import Any, Optional
 
 from fastapi import HTTPException, Request, status
@@ -108,6 +109,38 @@ def create_activity(
         return models.CreateActivityResponse(id=str(result.inserted_id))
     except Exception as err:
         error_message = "MongoDB create_activity - failed to create activity"
+        log.exception(error_message)
+        raise err  # noqa: TRY201
+
+
+def update_activity_state(
+    update_activity_state_input: models.UpdateActivityStateInput,
+) -> models.UpdateActivityStateResponse:
+    try:
+        enabled = True if update_activity_state_input.action == "enable" else False
+        filter_expression = {
+            "id": update_activity_state_input.activity_id,
+            "host.host_user_id": update_activity_state_input.user_id,
+        }
+        update_expression = {"$set": {"enabled": enabled}}
+        if enabled:
+            current_datetime = (
+                datetime.now(timezone.utc).isoformat(timespec="milliseconds").replace("+00:00", "Z")
+            )
+            update_expression["$set"]["datetimes.datetime_deleted"] = current_datetime
+
+        result = activity_collection.update_many(filter_expression, update_expression)
+
+        return models.UpdateActivityStateResponse(
+            acknowledged=result.acknowledged,
+            modified_count=result.modified_count,
+            matched_count=result.matched_count,
+        )
+    except Exception as err:
+        error_message = (
+            f"MongoDB update_activity_state - failed to update activity "
+            f"state {update_activity_state_input}"
+        )
         log.exception(error_message)
         raise err  # noqa: TRY201
 

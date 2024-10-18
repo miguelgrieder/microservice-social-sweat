@@ -116,8 +116,20 @@ class CreateActivityInput(BaseModel):
     activity: Activity
 
 
+class UpdateActivityStateInput(BaseModel):
+    action: Literal["enable", "disable"]
+    user_id: str
+    activity_id: str
+
+
 class CreateActivityResponse(BaseModel):
     id: str
+
+
+class UpdateActivityStateResponse(BaseModel):
+    acknowledged: bool
+    modified_count: int
+    matched_count: int
 
 
 class FilterActivityInput(BaseModel):
