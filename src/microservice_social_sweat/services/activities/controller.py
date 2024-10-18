@@ -27,7 +27,10 @@ activity_collection: Collection[dict[str, Any]] = db["activities"]
 def load_activities_from_mongodb(
     filter_activity_input: models.FilterActivityInput,
 ) -> list[models.Activity]:
-    query: dict[str, Any] = {"enabled": True}
+    query: dict[str, Any] = {}
+
+    if filter_activity_input.enabled and not filter_activity_input.activity_id:
+        query["enabled"] = filter_activity_input.enabled
 
     if filter_activity_input.activity_id:
         query["id"] = filter_activity_input.activity_id
