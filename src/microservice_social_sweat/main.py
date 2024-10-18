@@ -47,6 +47,7 @@ app.add_middleware(
 def health_check() -> dict[str, str]:
     return {"ping": "pong"}
 
+
 # @app.get("/env_test")
 # def env_test(token: str):
 #     return settings.model_dump()

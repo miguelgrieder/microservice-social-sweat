@@ -130,7 +130,7 @@ def update_activity_state(
             current_datetime = (
                 datetime.now(timezone.utc).isoformat(timespec="milliseconds").replace("+00:00", "Z")
             )
-            update_expression["$set"]["datetimes.datetime_deleted"] = current_datetime
+            update_expression["$set"]["datetimes.datetime_deleted"] = current_datetime  # type: ignore[assignment]
 
         result = activity_collection.update_many(filter_expression, update_expression)
 
