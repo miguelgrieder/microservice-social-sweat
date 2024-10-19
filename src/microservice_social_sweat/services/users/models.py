@@ -1,18 +1,21 @@
 from enum import Enum
 from typing import Any, Optional
 
-from pydantic import AnyUrl, BaseModel
+from pydantic import BaseModel, Field
 
 from microservice_social_sweat.services.activities.models import SportType
 
 
 class UserSocialMedias(BaseModel):
-    user_youtube: Optional[AnyUrl] = None
-    user_instagram: Optional[AnyUrl] = None
-    user_facebook: Optional[AnyUrl] = None
-    user_tiktok: Optional[AnyUrl] = None
-    user_strava: Optional[AnyUrl] = None
-
+    user_youtube: Optional[str] = None
+    user_instagram: Optional[str] = None
+    user_facebook: Optional[str] = None
+    user_tiktok: Optional[str] = None
+    user_strava: Optional[str] = None
+    user_phone: Optional[str] = None
+    use_phone: Optional[bool] = None
+    use_sms: Optional[bool] = None
+    use_whatsapp: Optional[bool] = None
 
 class UserMetrics(BaseModel):
     activities_created: int = 0
