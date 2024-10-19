@@ -29,7 +29,7 @@ def filter_users(
 @router.put("/{user_id}")
 def update_user_endpoint(
     request: Request, user_id: str, update_data: models.UpdateUserModel
-) -> Any:
+) -> models.UpdateUserResponse:
     # Check if the authenticated user is updating their own data
     # authenticated_user_id = request.state.user
     # if authenticated_user_id != user_id:
