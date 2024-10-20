@@ -191,10 +191,22 @@ def update_user(request: Request, user_id: str, update_data: UpdateUserModel) ->
         return UpdateUserResponse(user=updated_user)
 
 
+def merge_dicts_recursively(
+    secondary_dict: dict[str, Any], priority_dict: dict[str, Any]
+) -> dict[str, Any]:
+    """Recursively merge two dictionaries."""
+    merged = secondary_dict.copy()
+    for key, value in priority_dict.items():
+        if key in merged and isinstance(merged[key], dict) and isinstance(value, dict):
+            merged[key] = merge_dicts_recursively(merged[key], value)
+        else:
+            merged[key] = value
+    return merged
+
+
 def build_update_user_clerk_payload(
     headers: dict[str, str], update_data: UpdateUserModel, user_id: str
 ) -> dict[str, Any]:
-
     clerk_user_metadatas = get_user_metadatas_clerk(headers, user_id)
 
     # Prepare the payload for the Clerk API update
@@ -206,31 +218,18 @@ def build_update_user_clerk_payload(
     if update_data.username is not None:
         payload["username"] = update_data.username
 
-    # Currently all user_metadata is inunsafe_metadata, so its here
-    # Will need to change it when using other metadatas
+    # Currently all user_metadata is in unsafe_metadata
     if update_data.user_metadata is not None:
         user_metadata_dict = update_data.user_metadata.model_dump(exclude_unset=True)
         payload["unsafe_metadata"] = user_metadata_dict
 
-    # Merge current user metadata to don`t overwrite
-    if payload.get("unsafe_metadata"):
-        merged_unsafe_metadata = {
-            **clerk_user_metadatas["existing_unsafe_metadata"],
-            **payload["unsafe_metadata"],
-        }
-        payload["unsafe_metadata"] = merged_unsafe_metadata
-    if payload.get("public_metadata") is not None:
-        merged_public_metadata = {
-            **clerk_user_metadatas["existing_public_metadata"],
-            **payload["public_metadata"],
-        }
-        payload["public_metadata"] = merged_public_metadata
-    if payload.get("private_metadata") is not None:
-        merged_private_metadata = {
-            **clerk_user_metadatas["existing_private_metadata"],
-            **payload["private_metadata"],
-        }
-        payload["private_metadata"] = merged_private_metadata
+    # Merge current user metadata recursively to avoid overwriting
+    for metadata_key in ["unsafe_metadata", "public_metadata", "private_metadata"]:
+        if payload.get(metadata_key):
+            existing_metadata = clerk_user_metadatas.get(f"existing_{metadata_key}", {})
+            payload[metadata_key] = merge_dicts_recursively(
+                existing_metadata, payload[metadata_key]
+            )
     return payload
 
 
