@@ -1,5 +1,4 @@
 import logging
-from typing import Any
 
 import requests
 from fastapi import APIRouter, HTTPException, Request, status
