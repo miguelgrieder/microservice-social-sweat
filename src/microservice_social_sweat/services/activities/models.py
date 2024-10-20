@@ -68,8 +68,8 @@ class Geometry(BaseModel):
 class Location(BaseModel):
     country: Country
     area: str = Field(..., max_length=100)
-    city: str = Field(..., max_length=100)
-    smart_location: str = Field(..., max_length=200)
+    city: str = Field(..., max_length=100, min_length=2)
+    smart_location: str = Field(..., max_length=200, min_length=2)
     geometry: Geometry
 
 
@@ -124,8 +124,8 @@ class DateTimes(BaseModel):
 class Activity(BaseModel):
     id: str
     enabled: bool
-    name: str = Field(..., max_length=100)
-    description: str = Field(..., max_length=1000)
+    name: str = Field(..., max_length=100, min_length=5)
+    description: str = Field(..., max_length=1000, min_length=10)
     description_private: Optional[str] = Field(None, max_length=1000)
     activity_type: ActivityType
     sport_type: SportType
