@@ -79,7 +79,7 @@ class Price(BaseModel):
 
 
 class Participants(BaseModel):
-    participants_user_id: list[str] = Field(default_factory=list)
+    participants_user_id: list[Optional[str]] = Field(default_factory=list)
     max: Optional[int] = Field(None, gt=0)
 
     @field_validator("participants_user_id", mode="after")
