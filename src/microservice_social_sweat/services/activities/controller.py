@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 from typing import Any, Optional
 
 from fastapi import HTTPException, Request, status
+from pydantic import ValidationError
 from pymongo import MongoClient
 from pymongo.collection import Collection
 from pymongo.cursor import Cursor
@@ -27,6 +28,13 @@ activity_collection: Collection[dict[str, Any]] = db["activities"]
 def load_activities_from_mongodb(
     filter_activity_input: models.FilterActivityInput,
 ) -> list[models.Activity]:
+    combined_query = build_activity_query(filter_activity_input)
+    activities = fetch_and_parse_activities(combined_query)
+
+    return activities
+
+
+def build_activity_query(filter_activity_input: models.FilterActivityInput) -> dict[str, Any]:
     query: dict[str, Any] = {}
 
     if filter_activity_input.enabled and not filter_activity_input.activity_id:
@@ -54,10 +62,29 @@ def load_activities_from_mongodb(
         query["sport_type"] = {"$in": filter_activity_input.sport_types}
 
     combined_query = combine_datetime_querys(filter_activity_input, query)
+    return combined_query
 
-    # Fetch data from MongoDB
+
+def fetch_and_parse_activities(combined_query: dict[str, Any]) -> list[models.Activity]:
     cursor: Cursor[Any] = activity_collection.find(combined_query)
-    activities: list[models.Activity] = [models.Activity(**activity) for activity in cursor]
+    activities: list[models.Activity] = []
+    failed_count = 0
+
+    for activity_data in cursor:
+        try:
+            activity = models.Activity(**activity_data)
+            activities.append(activity)
+        except ValidationError:
+            failed_count += 1
+            mongo_id = (
+                activity_data.get("_id") if isinstance(activity_data, dict) else activity_data
+            )
+            log.exception(f"Failed to parse activity mongo _id: {mongo_id}")
+            continue
+
+    if failed_count > 0:
+        log.warning(f"Failed to parse {failed_count} activities.")
+
     return activities
 
 
