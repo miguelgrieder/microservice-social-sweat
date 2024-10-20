@@ -25,7 +25,11 @@ click==8.1.7
 deprecated==1.2.14
     # via limits
 dnspython==2.6.1
-    # via pymongo
+    # via
+    #   email-validator
+    #   pymongo
+email-validator==2.2.0
+    # via pydantic
 eval-type-backport==0.2.0
     # via clerk-backend-api
 fastapi==0.114.2
@@ -45,6 +49,7 @@ httpx==0.27.2
 idna==3.9
     # via
     #   anyio
+    #   email-validator
     #   httpx
     #   requests
 importlib-resources==6.4.5
