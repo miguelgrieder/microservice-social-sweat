@@ -50,10 +50,14 @@ class PriceUnit(str, Enum):
 
 
 class Country(str, Enum):
-    brazil = "Brazil"
-    united_states = "United States"
-    germany = "Germany"
-
+    brazil = "brazil"
+    united_states = "united_states"
+    germany = "germany"
+    argentina = "argentina"
+    paraguai = "paraguai"
+    chile = "chile"
+    canada = "canada"
+    mexico = "mexico"
 
 class Coordinates(BaseModel):
     latitude: float = Field(..., ge=-90, le=90)
