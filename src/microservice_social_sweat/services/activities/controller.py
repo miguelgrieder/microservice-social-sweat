@@ -56,7 +56,7 @@ def build_activity_query(filter_activity_input: models.FilterActivityInput) -> d
         query["activity_type"] = filter_activity_input.activity_type
 
     if filter_activity_input.price is not None:
-        query["price.value"] = int(filter_activity_input.price)  # TODO: Be float!
+        query["price.value"] = {"$lte": filter_activity_input.price}
 
     if filter_activity_input.sport_types:
         query["sport_type"] = {"$in": filter_activity_input.sport_types}
