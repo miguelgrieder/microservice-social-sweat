@@ -42,6 +42,21 @@ def create_activity(
     return result
 
 
+@router.put("/update", status_code=status.HTTP_200_OK)
+def update_activity(
+    create_activity_input: models.UpdateActivityInput,
+) -> models.UpdateActivityResponse:
+    try:
+        result = controller.update_activity(update_activity_input=create_activity_input)
+    except requests.exceptions.HTTPError as e:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=[{"msg": "HTTPError at external API call."}],
+        ) from e
+
+    return result
+
+
 @router.put("/state", status_code=status.HTTP_201_CREATED)
 def update_activity_state(
     update_activity_state_input: models.UpdateActivityStateInput,

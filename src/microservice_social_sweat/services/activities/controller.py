@@ -143,6 +143,77 @@ def create_activity(
         raise err  # noqa: TRY201
 
 
+def remove_none_values(data: Any) -> Any:
+    if isinstance(data, dict):
+        return {k: remove_none_values(v) for k, v in data.items() if v is not None}
+    elif isinstance(data, list):
+        return [remove_none_values(item) for item in data if item is not None]
+    else:
+        return data
+
+
+def update_activity(
+    update_activity_input: models.UpdateActivityInput,
+) -> models.UpdateActivityResponse:
+    try:
+        activity_id = update_activity_input.id
+        # Retrieve the existing activity from MongoDB
+        existing_activity = activity_collection.find_one({"id": activity_id})
+
+        if not existing_activity:
+            raise HTTPException(  # noqa: TRY301
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=[{"msg": f"Activity with id '{activity_id}' not found."}],
+            )
+
+        # Merge existing data with the updated data
+        update_data = (
+            remove_none_values(update_activity_input.update_activity_data.model_dump())
+            if update_activity_input.update_activity_data
+            else {}
+        )
+        # Specific items
+        if update_activity_input.max_participants is not None:
+            update_data["participants"] = update_data.get("participants", {})
+            update_data["participants"]["max"] = update_activity_input.max_participants
+        merged_data = {**existing_activity, **update_data}
+
+        # Validate the merged data using the Activity model
+        try:
+            validated_activity = models.Activity(**merged_data)
+        except ValidationError as validation_err:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail=[
+                    {
+                        "msg": "Validation failed for updated activity data.",
+                        "errors": validation_err.errors(),
+                    }
+                ],
+            ) from validation_err
+
+        # Perform the update in MongoDB after validation
+        result = activity_collection.update_one(
+            {"id": activity_id},  # Find the activity by its 'id'
+            {"$set": validated_activity.model_dump()},  # Use validated data for update
+        )
+
+        if result.matched_count == 0:
+            raise HTTPException(  # noqa: TRY301
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=[{"msg": f"Activity with id '{activity_id}' not found."}],
+            )
+
+        return models.UpdateActivityResponse(id=activity_id)
+
+    except Exception as err:
+        error_message = "MongoDB update_activity - failed to update activity"
+        log.exception(error_message)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=[{"msg": error_message}]
+        ) from err
+
+
 def update_activity_state(
     update_activity_state_input: models.UpdateActivityStateInput,
 ) -> models.UpdateActivityStateResponse:

@@ -59,6 +59,7 @@ class Country(str, Enum):
     canada = "canada"
     mexico = "mexico"
 
+
 class Coordinates(BaseModel):
     latitude: float = Field(..., ge=-90, le=90)
     longitude: float = Field(..., ge=-180, le=180)
@@ -147,6 +148,28 @@ class Activity(BaseModel):
         return v
 
 
+class UpdateActivityData(BaseModel):
+    name: Optional[str] = Field(None, max_length=100, min_length=5)
+    description: Optional[str] = Field(None, max_length=1000, min_length=10)
+    description_private: Optional[str] = Field(None, max_length=1000)
+    activity_type: Optional[ActivityType] = None
+    sport_type: Optional[SportType] = None
+    price: Optional[Price] = None
+    pictures: Optional[list[str]] = None
+
+    @field_validator("pictures", mode="after")
+    def validate_pictures_count(cls, v: list[str]) -> list[str]:
+        if len(v) > 10:
+            raise ValueError("Too many pictures; maximum allowed is 10.")
+        return v
+
+
+class UpdateActivityInput(BaseModel):
+    id: str = Field(..., pattern=ACTIVITY_ID_REGEX)
+    update_activity_data: Optional[UpdateActivityData] = None
+    max_participants: Optional[int]
+
+
 class CreateActivityInput(BaseModel):
     activity: Activity
 
@@ -158,6 +181,10 @@ class UpdateActivityStateInput(BaseModel):
 
 
 class CreateActivityResponse(BaseModel):
+    id: str = Field(..., pattern=ACTIVITY_ID_REGEX)
+
+
+class UpdateActivityResponse(BaseModel):
     id: str = Field(..., pattern=ACTIVITY_ID_REGEX)
 
 
