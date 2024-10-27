@@ -72,7 +72,7 @@ class Geometry(BaseModel):
 
 class Location(BaseModel):
     country: Country
-    area: str = Field(..., max_length=100)
+    area: Optional[str] = Field('', max_length=100)
     city: str = Field(..., max_length=100, min_length=2)
     smart_location: str = Field(..., max_length=200, min_length=2)
     geometry: Geometry
@@ -162,6 +162,7 @@ class UpdateActivityData(BaseModel):
     price: Optional[Price] = None
     pictures: Optional[list[str]] = None
     datetimes: Optional[DateTimesUpdate] = None
+    location: Location
 
     @field_validator("pictures", mode="after")
     def validate_pictures_count(cls, v: list[str]) -> list[str]:
