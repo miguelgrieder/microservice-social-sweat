@@ -1,7 +1,7 @@
 import re
 from datetime import datetime
 from enum import Enum
-from typing import Literal, Optional
+from typing import Any, Literal, Optional
 
 from pydantic import BaseModel, Field, ValidationInfo, field_validator, model_validator
 
@@ -110,6 +110,11 @@ class Host(BaseModel):
     host_user_id: str = Field(..., pattern=USER_ID_REGEX)
 
 
+class DateTimesUpdate(BaseModel):
+    datetime_start: Optional[str] = None
+    datetime_finish: Optional[str] = None
+
+
 class DateTimes(BaseModel):
     datetime_created: str
     datetime_deleted: Optional[str] = None
@@ -156,6 +161,7 @@ class UpdateActivityData(BaseModel):
     sport_type: Optional[SportType] = None
     price: Optional[Price] = None
     pictures: Optional[list[str]] = None
+    datetimes: Optional[DateTimesUpdate] = None
 
     @field_validator("pictures", mode="after")
     def validate_pictures_count(cls, v: list[str]) -> list[str]:

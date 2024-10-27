@@ -165,6 +165,9 @@ def update_activity(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=[{"msg": f"Activity with id '{activity_id}' not found."}],
             )
+        # get datetimes separated
+        datetimes = update_activity_input.update_activity_data.datetimes
+        update_activity_input.update_activity_data.datetimes = None
 
         # Merge existing data with the updated data
         update_data = (
@@ -176,7 +179,15 @@ def update_activity(
         if update_activity_input.max_participants is not None:
             update_data["participants"] = update_data.get("participants", {})
             update_data["participants"]["max"] = update_activity_input.max_participants
+
         merged_data = {**existing_activity, **update_data}
+
+        if datetimes.datetime_start is not None:
+            merged_data["datetimes"] = merged_data.get("datetimes", {})
+            merged_data["datetimes"]["datetime_start"] = datetimes.datetime_start
+        if datetimes.datetime_finish is not None:
+            merged_data["datetimes"] = merged_data.get("datetimes", {})
+            merged_data["datetimes"]["datetime_finish"] = datetimes.datetime_finish
 
         # Validate the merged data using the Activity model
         try:
