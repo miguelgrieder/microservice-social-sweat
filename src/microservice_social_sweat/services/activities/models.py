@@ -1,7 +1,7 @@
 import re
 from datetime import datetime
 from enum import Enum
-from typing import Any, Literal, Optional
+from typing import Literal, Optional
 
 from pydantic import BaseModel, Field, ValidationInfo, field_validator, model_validator
 
@@ -72,7 +72,7 @@ class Geometry(BaseModel):
 
 class Location(BaseModel):
     country: Country
-    area: Optional[str] = Field('', max_length=100)
+    area: Optional[str] = Field("", max_length=100)
     city: str = Field(..., max_length=100, min_length=2)
     smart_location: str = Field(..., max_length=200, min_length=2)
     geometry: Geometry

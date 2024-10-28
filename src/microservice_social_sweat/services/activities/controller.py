@@ -166,8 +166,9 @@ def update_activity(
                 detail=[{"msg": f"Activity with id '{activity_id}' not found."}],
             )
         # get datetimes separated
-        datetimes = update_activity_input.update_activity_data.datetimes
-        update_activity_input.update_activity_data.datetimes = None
+        if update_activity_input and update_activity_input.update_activity_data:
+            datetimes = update_activity_input.update_activity_data.datetimes
+            update_activity_input.update_activity_data.datetimes = None
 
         # Merge existing data with the updated data
         update_data = (
@@ -182,10 +183,10 @@ def update_activity(
 
         merged_data = {**existing_activity, **update_data}
 
-        if datetimes.datetime_start is not None:
+        if datetimes and datetimes.datetime_start is not None:
             merged_data["datetimes"] = merged_data.get("datetimes", {})
             merged_data["datetimes"]["datetime_start"] = datetimes.datetime_start
-        if datetimes.datetime_finish is not None:
+        if datetimes and datetimes.datetime_finish is not None:
             merged_data["datetimes"] = merged_data.get("datetimes", {})
             merged_data["datetimes"]["datetime_finish"] = datetimes.datetime_finish
 
