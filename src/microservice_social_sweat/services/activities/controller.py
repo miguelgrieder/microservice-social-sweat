@@ -131,7 +131,7 @@ def filter_activities(
 
 
 def create_activity(
-    create_activity_input: str,
+    create_activity_input: models.CreateActivityInput,
 ) -> models.CreateActivityResponse:
     try:
         activity_data = create_activity_input.activity.model_dump()
