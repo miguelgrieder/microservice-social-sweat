@@ -6,7 +6,7 @@
 #
 annotated-types==0.7.0
     # via pydantic
-anyio==4.4.0
+anyio==4.6.2.post1
     # via
     #   httpx
     #   starlette
@@ -16,15 +16,19 @@ certifi==2024.8.30
     #   httpcore
     #   httpx
     #   requests
-charset-normalizer==3.3.2
+cffi==1.17.1
+    # via cryptography
+charset-normalizer==3.4.0
     # via requests
-clerk-backend-api==0.5.0a12
+clerk-backend-api==1.1.2
     # via -r requirements/requirements.in
 click==8.1.7
     # via uvicorn
+cryptography==43.0.3
+    # via clerk-backend-api
 deprecated==1.2.14
     # via limits
-dnspython==2.6.1
+dnspython==2.7.0
     # via
     #   email-validator
     #   pymongo
@@ -32,21 +36,21 @@ email-validator==2.2.0
     # via pydantic
 eval-type-backport==0.2.0
     # via clerk-backend-api
-fastapi==0.114.2
+fastapi==0.115.4
     # via -r requirements/requirements.in
 h11==0.14.0
     # via
     #   httpcore
     #   uvicorn
-httpcore==1.0.5
+httpcore==1.0.6
     # via httpx
-httptools==0.6.1
+httptools==0.6.4
     # via uvicorn
 httpx==0.27.2
     # via
     #   -r requirements/requirements.in
     #   clerk-backend-api
-idna==3.9
+idna==3.10
     # via
     #   anyio
     #   email-validator
@@ -62,6 +66,8 @@ mypy-extensions==1.0.0
     # via typing-inspect
 packaging==24.1
     # via limits
+pycparser==2.22
+    # via cffi
 pydantic==2.8.2
     # via
     #   -r requirements/requirements.in
@@ -70,9 +76,11 @@ pydantic==2.8.2
     #   pydantic-settings
 pydantic-core==2.20.1
     # via pydantic
-pydantic-settings==2.5.2
+pydantic-settings==2.6.1
     # via -r requirements/requirements.in
-pymongo==4.8.0
+pyjwt==2.9.0
+    # via clerk-backend-api
+pymongo==4.10.1
     # via -r requirements/requirements.in
 python-dateutil==2.8.2
     # via clerk-backend-api
@@ -92,7 +100,7 @@ sniffio==1.3.1
     # via
     #   anyio
     #   httpx
-starlette==0.38.5
+starlette==0.41.2
     # via
     #   -r requirements/requirements.in
     #   fastapi
@@ -107,13 +115,13 @@ typing-inspect==0.9.0
     # via clerk-backend-api
 urllib3==2.2.3
     # via requests
-uvicorn==0.30.6
+uvicorn==0.32.0
     # via -r requirements/requirements.in
-uvloop==0.20.0
+uvloop==0.21.0
     # via uvicorn
 watchfiles==0.24.0
     # via uvicorn
-websockets==13.0.1
+websockets==13.1
     # via uvicorn
 wrapt==1.16.0
     # via deprecated

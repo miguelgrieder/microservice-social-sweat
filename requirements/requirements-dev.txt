@@ -10,13 +10,13 @@ annotated-types==0.7.0
     # via
     #   microservice-social-sweat
     #   pydantic
-anyio==4.4.0
+anyio==4.6.2.post1
     # via
     #   httpx
     #   microservice-social-sweat
     #   starlette
     #   watchfiles
-black==24.8.0
+black==24.10.0
     # via -r requirements/requirements-dev.in
 cachetools==5.5.0
     # via tox
@@ -27,14 +27,16 @@ certifi==2024.8.30
     #   microservice-social-sweat
     #   requests
 cffi==1.17.1
-    # via cryptography
+    # via
+    #   cryptography
+    #   microservice-social-sweat
 chardet==5.2.0
     # via tox
-charset-normalizer==3.3.2
+charset-normalizer==3.4.0
     # via
     #   microservice-social-sweat
     #   requests
-clerk-backend-api==0.5.0a12
+clerk-backend-api==1.1.2
     # via microservice-social-sweat
 click==8.1.7
     # via
@@ -43,19 +45,21 @@ click==8.1.7
     #   uvicorn
 colorama==0.4.6
     # via tox
-coverage==7.6.1
+coverage==7.6.4
     # via pytest-cov
-cryptography==43.0.1
+cryptography==43.0.3
     # via
+    #   clerk-backend-api
+    #   microservice-social-sweat
     #   types-pyopenssl
     #   types-redis
 deprecated==1.2.14
     # via
     #   limits
     #   microservice-social-sweat
-distlib==0.3.8
+distlib==0.3.9
     # via virtualenv
-dnspython==2.6.1
+dnspython==2.7.0
     # via
     #   email-validator
     #   microservice-social-sweat
@@ -66,9 +70,9 @@ eval-type-backport==0.2.0
     # via
     #   clerk-backend-api
     #   microservice-social-sweat
-fastapi==0.114.2
+fastapi==0.115.4
     # via microservice-social-sweat
-filelock==3.16.0
+filelock==3.16.1
     # via
     #   tox
     #   virtualenv
@@ -77,17 +81,17 @@ h11==0.14.0
     #   httpcore
     #   microservice-social-sweat
     #   uvicorn
-httpcore==1.0.5
+httpcore==1.0.6
     # via
     #   httpx
     #   microservice-social-sweat
-httptools==0.6.1
+httptools==0.6.4
     # via microservice-social-sweat
 httpx==0.27.2
     # via
     #   clerk-backend-api
     #   microservice-social-sweat
-idna==3.9
+idna==3.10
     # via
     #   anyio
     #   email-validator
@@ -108,7 +112,7 @@ limits==3.13.0
     # via
     #   microservice-social-sweat
     #   slowapi
-mypy==1.11.2
+mypy==1.13.0
     # via -r requirements/requirements-dev.in
 mypy-extensions==1.0.0
     # via
@@ -126,7 +130,7 @@ packaging==24.1
     #   tox
 pathspec==0.12.1
     # via black
-platformdirs==4.3.3
+platformdirs==4.3.6
     # via
     #   black
     #   tox
@@ -136,7 +140,9 @@ pluggy==1.5.0
     #   pytest
     #   tox
 pycparser==2.22
-    # via cffi
+    # via
+    #   cffi
+    #   microservice-social-sweat
 pydantic==2.8.2
     # via
     #   clerk-backend-api
@@ -147,11 +153,15 @@ pydantic-core==2.20.1
     # via
     #   microservice-social-sweat
     #   pydantic
-pydantic-settings==2.5.2
+pydantic-settings==2.6.1
     # via microservice-social-sweat
-pymongo==4.8.0
+pyjwt==2.9.0
+    # via
+    #   clerk-backend-api
+    #   microservice-social-sweat
+pymongo==4.10.1
     # via microservice-social-sweat
-pyproject-api==1.7.1
+pyproject-api==1.8.0
     # via tox
 pytest==8.3.3
     # via
@@ -161,7 +171,7 @@ pytest==8.3.3
     #   pytest-mock
 pytest-asyncio==0.24.0
     # via -r requirements/requirements-dev.in
-pytest-cov==5.0.0
+pytest-cov==6.0.0
     # via -r requirements/requirements-dev.in
 pytest-mock==3.14.0
     # via -r requirements/requirements-dev.in
@@ -178,7 +188,7 @@ pyyaml==6.0.2
     # via microservice-social-sweat
 requests==2.32.3
     # via microservice-social-sweat
-ruff==0.6.5
+ruff==0.7.2
     # via -r requirements/requirements-dev.in
 six==1.16.0
     # via
@@ -191,21 +201,21 @@ sniffio==1.3.1
     #   anyio
     #   httpx
     #   microservice-social-sweat
-starlette==0.38.5
+starlette==0.41.2
     # via
     #   fastapi
     #   microservice-social-sweat
-tox==4.18.1
+tox==4.23.2
     # via -r requirements/requirements-dev.in
 types-cffi==1.16.0.20240331
     # via types-pyopenssl
 types-pyopenssl==24.1.0.20240722
     # via types-redis
-types-redis==4.6.0.20240903
+types-redis==4.6.0.20241004
     # via -r requirements/requirements-dev.in
-types-requests==2.32.0.20240914
+types-requests==2.32.0.20241016
     # via -r requirements/requirements-dev.in
-types-setuptools==74.1.0.20240907
+types-setuptools==75.2.0.20241025
     # via types-cffi
 typing-extensions==4.12.2
     # via
@@ -225,15 +235,15 @@ urllib3==2.2.3
     #   microservice-social-sweat
     #   requests
     #   types-requests
-uvicorn==0.30.6
+uvicorn==0.32.0
     # via microservice-social-sweat
-uvloop==0.20.0
+uvloop==0.21.0
     # via microservice-social-sweat
-virtualenv==20.26.4
+virtualenv==20.27.1
     # via tox
 watchfiles==0.24.0
     # via microservice-social-sweat
-websockets==13.0.1
+websockets==13.1
     # via microservice-social-sweat
 wrapt==1.16.0
     # via

@@ -50,6 +50,7 @@ class Settings(BaseSettings):
     clerk_api_url: str
     clerk_api_public_key: str
     clerk_api_secret_key: str
+    clerk_jwt_public_key: str
 
     class Config:
         env_file = ".env"
