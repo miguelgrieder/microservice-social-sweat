@@ -3,6 +3,8 @@ import logging
 import requests
 from fastapi import APIRouter, HTTPException, Request, status
 
+from microservice_social_sweat.services.utils import verify_user_id_is_the_same_from_jwt
+
 from . import controller, models
 
 log = logging.getLogger(__name__)
@@ -29,10 +31,7 @@ def filter_users(
 def update_user_endpoint(
     request: Request, user_id: str, update_data: models.UpdateUserModel
 ) -> models.UpdateUserResponse:
-    # Check if the authenticated user is updating their own data
-    # authenticated_user_id = request.state.user
-    # if authenticated_user_id != user_id:
-    #     raise HTTPException(status_code=403, detail="Forbidden: Cannot update other user's data")
+    verify_user_id_is_the_same_from_jwt(request, user_id)
 
     try:
         result = controller.update_user(request=request, user_id=user_id, update_data=update_data)

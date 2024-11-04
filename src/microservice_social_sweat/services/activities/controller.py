@@ -10,6 +10,7 @@ from pymongo.cursor import Cursor
 
 from microservice_social_sweat import config
 from microservice_social_sweat.services.activities import models
+from microservice_social_sweat.services.utils import verify_user_id_is_the_same_from_jwt
 
 settings = config.get_settings()
 log = logging.getLogger(__name__)
@@ -153,6 +154,7 @@ def remove_none_values(data: Any) -> Any:
 
 
 def update_activity(
+    request: Request,
     update_activity_input: models.UpdateActivityInput,
 ) -> models.UpdateActivityResponse:
     try:
@@ -204,6 +206,7 @@ def update_activity(
                 ],
             ) from validation_err
 
+        verify_user_id_is_the_same_from_jwt(request, validated_activity.host.host_user_id)
         # Perform the update in MongoDB after validation
         result = activity_collection.update_one(
             {"id": activity_id},  # Find the activity by its 'id'
