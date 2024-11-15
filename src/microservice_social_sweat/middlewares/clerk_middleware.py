@@ -3,7 +3,7 @@ from typing import Any, Callable, Optional
 
 import jwt
 from fastapi import HTTPException, Request
-from jwt.exceptions import PyJWTError
+from jwt.exceptions import ExpiredSignatureError, PyJWTError
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.types import ASGIApp
 
@@ -38,10 +38,17 @@ class ClerkMiddleware(BaseHTTPMiddleware):
 
         try:
             payload = jwt.decode(token, key=self.public_key, algorithms=["RS256"])
-            request.state.user_id = payload.get("sub")
         except PyJWTError as e:
-            raise HTTPException(status_code=401, detail="Invalid token") from e
-
+            if not settings.ignore_expired_jwt and isinstance(e, ExpiredSignatureError):
+                raise HTTPException(status_code=401, detail="Invalid token") from e
+            else:
+                payload = jwt.decode(
+                    token,
+                    key=self.public_key,
+                    algorithms=["RS256"],
+                    options={"verify_exp": False},
+                )
+        request.state.user_id = payload["sub"]
         # Proceed to the next middleware or endpoint
         response = await call_next(request)
         return response

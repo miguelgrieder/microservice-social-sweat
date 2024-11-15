@@ -30,6 +30,7 @@ class Settings(BaseSettings):
     # - Authentication -
     auth_middleware_enabled: bool = True
     auth_middleware_secret: SecretStr = SecretStr("")
+    ignore_expired_jwt: bool = False
 
     # - MongoDB Config -
     mongo_variables_host: str = "localhost"
