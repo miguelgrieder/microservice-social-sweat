@@ -42,7 +42,7 @@ class Settings(BaseSettings):
     # cors_origins: list[str] = ["*"]
 
     # - Logging (Local) -
-    log_level: Union[int, str] = "WARNING"
+    log_level: Union[int, str] = "INFO"
 
     # - Development -
     dev_uvicorn_reload: bool = False
